@@ -1,6 +1,8 @@
 import "./style.css";
-import { entryFormUI } from "./entry/entryFormUI";
-import { createProjectUI } from "./projects/createProjectUI";
+import { entryFormUI } from "./entry/entryFormUI.js";
+import { createProjectUI } from "./projects/createProjectUI.js";
+import { addProject, getProjects, addToDoToProject } from "./projects/projectManager.js";
+import { createProject } from "./projects/createProject.js";
 
 const add = document.getElementById("add");
 const search = document.getElementById("search");
@@ -9,17 +11,23 @@ const projects = document.getElementById("projects");
 const activityContainer = document.querySelector(".activity-container");
 
 
+const university = createProject("Hello");
+addProject(university);
+console.log(getProjects())
+
 
 const addButton = document.createElement("button");
 addButton.textContent= "add";
 add.appendChild(addButton);
 
 addButton.addEventListener("click", () => {
-    const entryForm = entryFormUI((todo) => {
+    const entryForm = entryFormUI(getProjects(), (todo, project) => {
+        addToDoToProject(todo, project);
         console.log(todo);
+        console.log(project);
     });
 
-    entryContainer.appendChild(entryForm);
+    activityContainer.appendChild(entryForm);
 
     
 })
@@ -29,8 +37,13 @@ createProjectButton.textContent = "create project";
 projects.appendChild(createProjectButton);
 
 createProjectButton.addEventListener("click", () => {
-    const projectForm = createProjectUI((project) => {
-        console.log(project);
+    const projectForm = createProjectUI((projectTitle) => {
+        const newProject = createProject(projectTitle);
+
+        addProject(newProject);
+        
+        alert("Project Successfully Created");
+        console.log(getProjects());
     });
 
     activityContainer.appendChild(projectForm);

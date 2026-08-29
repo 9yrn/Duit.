@@ -1,0 +1,19 @@
+import { saveProjects, loadProjects } from "../../storage/storage.js";
+
+const projects = [];
+
+export function addProject (project) {
+    projects.push(project);
+
+    saveProjects(projects)
+}
+
+export function getProjects() {
+    return projects;
+}
+
+export function getTodoToProject (project, todo) {
+    project.todo.push(todo);
+
+    saveProjects(projects);
+}
