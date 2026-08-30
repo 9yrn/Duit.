@@ -6,7 +6,10 @@ export function loadProjects() {
     const savedProjects = localStorage.getItem("projects");
 
     if (saveProjects === null) {
-        return [];
+        return {
+        name: "Inbox",
+        todos: []
+    }
     } 
 
     return JSON.parse(savedProjects);

@@ -17,3 +17,7 @@ export function getTodoToProject (project, todo) {
 
     saveProjects(projects);
 }
+
+export function addToDoToProject(project, todo) {
+    project.todos.push(todo);
+}
