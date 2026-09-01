@@ -3,11 +3,14 @@ import { entryFormUI } from "./entry/entryFormUI.js";
 import { createProjectUI } from "./projects/createProjectUI.js";
 import { addProject, getProjects, addToDoToProject } from "./projects/projectManager.js";
 import { createProject } from "./projects/createProject.js";
-import { getTodayTodos } from "./todos/todoFilters.js";
+import { getTodayTodos, getUpcomingTodos, searchTodos} from "./todos/todoFilters.js";
+import { displayTodoListUI } from "./todos/todoListUI.js";
+import { searchFormUI } from "./todos/searchUI.js";
 
 const add = document.getElementById("add");
 const search = document.getElementById("search");
 const upcoming = document.getElementById("upcoming");
+const today = document.getElementById("today");
 const projects = document.getElementById("projects");
 const activityContainer = document.querySelector(".activity-container");
 
@@ -22,7 +25,10 @@ const addButton = document.createElement("button");
 addButton.textContent= "add";
 add.appendChild(addButton);
 
+//Entries
 addButton.addEventListener("click", () => {
+    activityContainer.innerHTML= "";
+
     const entryForm = entryFormUI(getProjects(), (todo, project) => {
         addToDoToProject(project, todo);
         console.log(todo);
@@ -34,11 +40,14 @@ addButton.addEventListener("click", () => {
     
 })
 
+//Create Project
 const createProjectButton = document.createElement("button");
 createProjectButton.textContent = "create project";
 projects.appendChild(createProjectButton);
 
 createProjectButton.addEventListener("click", () => {
+    activityContainer.innerHTML= "";
+
     const projectForm = createProjectUI((projectTitle) => {
         const newProject = createProject(projectTitle);
 
@@ -52,3 +61,60 @@ createProjectButton.addEventListener("click", () => {
 
 
 })
+
+//Upcoming
+const createUpcomingButton = document.createElement("button");
+createUpcomingButton.textContent = "upcoming";
+upcoming.appendChild(createUpcomingButton);
+
+createUpcomingButton.addEventListener("click", () => {
+    const todos = getUpcomingTodos(getProjects());
+
+    const todoList = displayTodoListUI(todos);
+
+    //Empty out the container
+    activityContainer.innerHTML = ""
+
+    activityContainer.appendChild(todoList);
+
+});
+
+//Today
+const createTodayButton = document.createElement("button");
+createTodayButton.textContent = "today";
+today.appendChild(createTodayButton);
+
+createTodayButton.addEventListener("click", () => {
+    const todos = getTodayTodos(getProjects());
+
+    const todoList = displayTodoListUI(todos);
+
+    //Empty out the container
+    activityContainer.innerHTML = ""
+    
+    activityContainer.appendChild(todoList);
+
+});
+
+//Search
+const createSearchButton = document.createElement("button");
+createSearchButton.textContent = "search";
+search.appendChild(createSearchButton);
+
+createSearchButton.addEventListener("click", () => {
+    activityContainer.innerHTML = "";
+
+
+    const searchForm = searchFormUI((searchEntry) => {
+        const results = searchTodos(getProjects(), searchEntry);
+
+    console.log(results);
+
+    
+});
+
+activityContainer.appendChild(searchForm);
+
+
+});
+
