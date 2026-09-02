@@ -1,18 +1,22 @@
 import "./style.css";
 import { entryFormUI } from "./entry/entryFormUI.js";
 import { createProjectUI } from "./projects/createProjectUI.js";
-import { addProject, getProjects, addToDoToProject } from "./projects/projectManager.js";
+import { addProject, getProjects, addToDoToProject, updateTodo, updateProject } from "./projects/projectManager.js";
 import { createProject } from "./projects/createProject.js";
 import { getTodayTodos, getUpcomingTodos, searchTodos, getAllTodos} from "./todos/todoFilters.js";
 import { displayTodoListUI } from "./todos/todoListUI.js";
 import { searchFormUI } from "./todos/searchUI.js";
+import { projectListUI } from "./projects/projectListUI.js";
+import { editProjectUI } from "./projects/editProjectUI.js";
+import { editTodoUI } from "./todos/editTodo.js";
+
 
 const add = document.getElementById("add");
 const search = document.getElementById("search");
 const upcoming = document.getElementById("upcoming");
 const today = document.getElementById("today");
 const projects = document.getElementById("projects");
-const viewAll = document.getElementById("allTodos");
+const all = document.getElementById("allTodos");
 const activityContainer = document.querySelector(".activity-container");
 
 const addButton = document.createElement("button");
@@ -27,6 +31,9 @@ addButton.addEventListener("click", () => {
         addToDoToProject(project, todo);
         console.log(todo);
         console.log(project);
+        alert("Duit Successfully Created");
+
+        showAllTodos();
     });
 
     activityContainer.appendChild(entryForm);
@@ -49,9 +56,12 @@ createProjectButton.addEventListener("click", () => {
         
         alert("Project Successfully Created");
         console.log(getProjects());
+
+        showProjects();
     });
 
     activityContainer.appendChild(projectForm);
+
 
 
 })
@@ -102,27 +112,87 @@ createSearchButton.addEventListener("click", () => {
     const searchForm = searchFormUI((searchEntry) => {
         const results = searchTodos(getProjects(), searchEntry);
 
-    console.log(results);
+        activityContainer.appendChild(displayTodoListUI(results));
+        //test
+        console.log(results);
+    });
 
-    
+    activityContainer.appendChild(searchForm);
+
+
+
 });
 
-activityContainer.appendChild(displayTodoListUI(results));
+// View all todos
 
+function showAllTodos() {
+    const todos = getAllTodos(getProjects());
 
-});
+    const todoList = displayTodoListUI(
+        todos,
+        handleEditTodo
+    );
 
-//view all todos
-const createViewAllButton = document.createElement("button");
-createViewAllButton.textContent = "all";
-viewAll.appendChild(createViewAllButton);
-
-createViewAllButton.addEventListener("click", () => {
     activityContainer.innerHTML = "";
+    activityContainer.appendChild(todoList);
+}
 
-    const allTodos = getAllTodos(getProjects());
+// Edit todo 
+function handleEditTodo(todo) {
+    const editForm = editTodoUI(
+        todo,
+        getProjects(),
+        (todo, updatedData, selectedProject) => {
 
-    const displayTodos = displayTodoListUI(allTodos);
+            updateTodo(todo, updatedData);
 
-    activityContainer.appendChild(displayTodos);
-})
+            // Project changing will be handled separately
+            console.log("Selected project:", selectedProject);
+
+            alert("Todo successfully updated");
+
+            showAllTodos();
+        }
+    );
+
+    activityContainer.innerHTML = "";
+    activityContainer.appendChild(editForm);
+}
+
+//show projects
+
+function showProjects() {
+    const projectList = projectListUI(
+        getProjects(),
+        handleEditProject
+    );
+
+    activityContainer.innerHTML = "";
+    activityContainer.appendChild(projectList);
+}
+
+//edit project
+function handleEditProject(project) {
+    const editForm = editProjectUI(
+        project,
+        (project, newName) => {
+
+            updateProject(project, newName);
+
+            alert("Project successfully updated");
+
+            showProjects();
+        }
+    );
+
+    activityContainer.innerHTML = "";
+    activityContainer.appendChild(editForm);
+}
+
+//all todos
+const allButton = document.createElement("button");
+allButton.textContent = "All";
+
+all.appendChild(allButton);
+
+allButton.addEventListener("click", showAllTodos);

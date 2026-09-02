@@ -20,4 +20,17 @@ export function getTodoToProject (project, todo) {
 
 export function addToDoToProject(project, todo) {
     project.todos.push(todo);
+    savedProjects(projects);
+}
+
+export function updateTodo(todo, updatedData) {
+    todo.title = updatedData.title;
+    todo.text = updatedData.text;
+    todo.date = updatedData.date;
+    saveProjects(projects);
+}
+
+export function updateProject(project, newName) {
+    project.name = newName;
+    saveProjects(projects);
 }

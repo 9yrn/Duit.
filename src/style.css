@@ -167,6 +167,15 @@ h1 {
 	--button-hover-border: #0f4c54;
 }
 
+#allTodos button {
+	--button-background: #364152;
+	--button-color: #ffffff;
+	--button-border: #27303d;
+	--button-hover-background: #27303d;
+	--button-hover-color: #ffffff;
+	--button-hover-border: #1d2430;
+}
+
 /* ------------------------------
    Main activity area
    ------------------------------ */
@@ -261,6 +270,28 @@ form button[type="button"]:focus-visible {
 	color: var(--button-hover-color);
 }
 
+/* Edit forms use the same controls as the create forms. */
+#edit-todo,
+#edit-project {
+	display: grid;
+	gap: 12px;
+}
+
+#edit-todo button,
+#edit-project button {
+	grid-row: auto;
+}
+
+#edit-todo button[type="submit"],
+#edit-project button[type="submit"] {
+	grid-column: 1;
+}
+
+#edit-todo button[type="button"],
+#edit-project button[type="button"] {
+	grid-column: 2;
+}
+
 /* Keep paired form actions balanced and easy to tap. */
 #entry button,
 .projectCreate button {
@@ -307,6 +338,59 @@ form button[type="button"]:focus-visible {
 	color: var(--muted);
 	font-size: 0.88rem;
 	line-height: 1.45;
+}
+
+.todoElement button,
+.project-element button,
+.project-list button {
+	min-height: 36px;
+	padding: 8px 12px;
+	border: 1px solid var(--accent);
+	border-radius: 8px;
+	background: var(--accent);
+	color: #ffffff;
+	font: inherit;
+	font-size: 0.82rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.todoElement button {
+	margin-top: 10px;
+}
+
+.todoElement button:hover,
+.todoElement button:focus-visible,
+.project-element button:hover,
+.project-element button:focus-visible,
+.project-list button:hover,
+.project-list button:focus-visible {
+	border-color: var(--accent-dark);
+	background: var(--accent-dark);
+}
+
+/* Project editing list */
+.project-list {
+	display: grid;
+	gap: 12px;
+}
+
+.project-element {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 14px 16px;
+	border: 1px solid var(--line);
+	border-radius: var(--radius);
+	background: var(--surface-muted);
+}
+
+.project-element h3 {
+	min-width: 0;
+	margin: 0;
+	overflow-wrap: anywhere;
+	font-size: 1rem;
 }
 
 /* ------------------------------
