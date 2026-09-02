@@ -1,0 +1,328 @@
+/* ------------------------------
+   Design tokens
+   ------------------------------ */
+:root {
+	--page: #e9edf0;
+	--surface: #ffffff;
+	--surface-muted: #f4f6f7;
+	--ink: #1f2933;
+	--muted: #68737d;
+	--line: #d7dde1;
+	--accent: #176b87;
+	--accent-dark: #0f4c61;
+	--accent-soft: #dceef3;
+	--danger: #9b3d3d;
+	--radius: 12px;
+	--shadow: 0 16px 36px rgba(31, 41, 51, 0.12);
+}
+
+/* ------------------------------
+   Page and app shell
+   ------------------------------ */
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 24px 12px;
+	background: var(--page);
+	color: var(--ink);
+	font-family: "Avenir Next", "Trebuchet MS", sans-serif;
+}
+
+.container {
+	width: min(100%, 430px);
+	min-height: min(820px, calc(100vh - 48px));
+	margin: 0 auto;
+	overflow: hidden;
+	background: var(--surface);
+	border: 2px solid var(--ink);
+	border-radius: 18px;
+	box-shadow: var(--shadow);
+}
+
+/* App heading */
+h1 {
+	margin: 0;
+	padding: 28px 20px 0;
+	color: var(--accent-dark);
+	font-family: Georgia, "Times New Roman", serif;
+	font-size: clamp(2rem, 9vw, 2.8rem);
+	font-weight: 700;
+	letter-spacing: 0;
+	line-height: 1;
+    text-align: center;
+}
+
+.sidebar {
+	min-height: inherit;
+	padding: 28px 20px 24px;
+}
+
+/* The blank user area becomes a quiet app header without extra markup. */
+.user {
+	min-height: 34px;
+	margin-bottom: 22px;
+	border-bottom: 1px solid var(--line);
+}
+
+/* Navigation controls */
+.options {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.options li:last-child {
+	grid-column: 1 / -1;
+}
+
+.options li > div {
+	min-width: 0;
+}
+
+.options button {
+	--button-background: var(--surface-muted);
+	--button-color: var(--ink);
+	--button-border: var(--line);
+	--button-hover-background: var(--accent-soft);
+	--button-hover-color: var(--accent-dark);
+	--button-hover-border: var(--accent);
+
+	width: 100%;
+	min-height: 42px;
+	padding: 10px 12px;
+	border: 1px solid var(--button-border);
+	border-radius: 8px;
+	background: var(--button-background);
+	color: var(--button-color);
+	font: inherit;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	text-transform: capitalize;
+	cursor: pointer;
+	transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.options button:hover,
+.options button:focus-visible {
+	border-color: var(--button-hover-border);
+	background: var(--button-hover-background);
+	color: var(--button-hover-color);
+}
+
+/* Individual navigation button themes. */
+#add button {
+	--button-background: #2f855a;
+	--button-color: #ffffff;
+	--button-border: #276749;
+	--button-hover-background: #276749;
+	--button-hover-color: #ffffff;
+	--button-hover-border: #22543d;
+}
+
+#search button {
+	--button-background: #2b6cb0;
+	--button-color: #ffffff;
+	--button-border: #2c5282;
+	--button-hover-background: #2c5282;
+	--button-hover-color: #ffffff;
+	--button-hover-border: #2a4365;
+}
+
+#today button {
+	--button-background: #c05621;
+	--button-color: #ffffff;
+	--button-border: #9c4221;
+	--button-hover-background: #9c4221;
+	--button-hover-color: #ffffff;
+	--button-hover-border: #7b341e;
+}
+
+#upcoming button {
+	--button-background: #805ad5;
+	--button-color: #ffffff;
+	--button-border: #6b46c1;
+	--button-hover-background: #6b46c1;
+	--button-hover-color: #ffffff;
+	--button-hover-border: #553c9a;
+}
+
+#projects button {
+	--button-background: #177e89;
+	--button-color: #ffffff;
+	--button-border: #13636c;
+	--button-hover-background: #13636c;
+	--button-hover-color: #ffffff;
+	--button-hover-border: #0f4c54;
+}
+
+/* ------------------------------
+   Main activity area
+   ------------------------------ */
+.activity-container {
+	min-height: 360px;
+	margin-top: 24px;
+	padding-top: 22px;
+	border-top: 1px solid var(--line);
+}
+
+form {
+	display: grid;
+	gap: 12px;
+}
+
+input,
+textarea,
+select {
+	width: 100%;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	background: var(--surface);
+	color: var(--ink);
+	font: inherit;
+	font-size: 0.95rem;
+}
+
+input,
+select {
+	min-height: 44px;
+	padding: 10px 12px;
+}
+
+textarea {
+	min-height: 120px;
+	padding: 12px;
+	resize: vertical;
+}
+
+input::placeholder,
+textarea::placeholder {
+	color: var(--muted);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+	outline: 3px solid var(--accent-soft);
+	border-color: var(--accent);
+}
+
+form button {
+	/* Set these variables on a specific form button to change its appearance. */
+	--button-background: var(--accent);
+	--button-color: #ffffff;
+	--button-border: var(--accent);
+	--button-hover-background: var(--accent-dark);
+	--button-hover-color: #ffffff;
+	--button-hover-border: var(--accent-dark);
+
+	min-height: 42px;
+	padding: 9px 14px;
+	border: 1px solid var(--button-border);
+	border-radius: 8px;
+	background: var(--button-background);
+	color: var(--button-color);
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+form button:hover,
+form button:focus-visible {
+	border-color: var(--button-hover-border);
+	background: var(--button-hover-background);
+	color: var(--button-hover-color);
+}
+
+form button[type="button"] {
+	--button-background: var(--surface-muted);
+	--button-color: var(--ink);
+	--button-border: var(--line);
+	--button-hover-background: #f8eaea;
+	--button-hover-color: var(--danger);
+	--button-hover-border: var(--danger);
+}
+
+form button[type="button"]:hover,
+form button[type="button"]:focus-visible {
+	border-color: var(--button-hover-border);
+	background: var(--button-hover-background);
+	color: var(--button-hover-color);
+}
+
+/* Keep paired form actions balanced and easy to tap. */
+#entry button,
+.projectCreate button {
+	grid-row: 5;
+}
+
+.projectCreate button {
+	grid-row: 2;
+}
+
+#entry button[type="button"],
+.projectCreate button[type="button"] {
+	grid-column: 1;
+}
+
+#entry button[type="submit"],
+.projectCreate button[type="submit"] {
+	grid-column: 2;
+}
+
+/* ------------------------------
+   Todo results
+   ------------------------------ */
+.todo-list {
+	display: grid;
+	gap: 12px;
+}
+
+.todoElement {
+	padding: 16px;
+	border: 1px solid var(--line);
+	border-left: 4px solid var(--accent);
+	border-radius: var(--radius);
+	background: var(--surface-muted);
+}
+
+.todoElement h3 {
+	margin: 0 0 8px;
+	font-size: 1rem;
+}
+
+.todoElement p {
+	margin: 6px 0 0;
+	color: var(--muted);
+	font-size: 0.88rem;
+	line-height: 1.45;
+}
+
+/* ------------------------------
+   Small-screen adjustments
+   ------------------------------ */
+@media (max-width: 360px) {
+	body {
+		padding: 10px 6px;
+	}
+
+	.container {
+		min-height: calc(100vh - 20px);
+		border-radius: 12px;
+	}
+
+	.sidebar {
+		padding: 22px 14px 18px;
+	}
+}

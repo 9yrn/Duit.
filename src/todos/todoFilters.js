@@ -48,3 +48,15 @@ export function searchTodos(projects, searchEntry) {
 
     return searchResults;
 }
+
+export function getAllTodos(projects) {
+    const allTodos = [];
+
+    projects.forEach((project) => {
+        project.todos.forEach((todo) => {
+            allTodos.push(todo);
+        })
+    })
+    return allTodos;
+}
+

@@ -5,11 +5,11 @@ export function saveProjects(projects) {
 export function loadProjects() {
     const savedProjects = localStorage.getItem("projects");
 
-    if (saveProjects === null) {
-        return {
-        name: "Inbox",
-        todos: []
-    }
+    if (savedProjects === null) {
+        return [{
+            name: "Inbox",
+            todos: []
+        }];
     } 
 
     return JSON.parse(savedProjects);

@@ -3,7 +3,7 @@ import { entryFormUI } from "./entry/entryFormUI.js";
 import { createProjectUI } from "./projects/createProjectUI.js";
 import { addProject, getProjects, addToDoToProject } from "./projects/projectManager.js";
 import { createProject } from "./projects/createProject.js";
-import { getTodayTodos, getUpcomingTodos, searchTodos} from "./todos/todoFilters.js";
+import { getTodayTodos, getUpcomingTodos, searchTodos, getAllTodos} from "./todos/todoFilters.js";
 import { displayTodoListUI } from "./todos/todoListUI.js";
 import { searchFormUI } from "./todos/searchUI.js";
 
@@ -12,14 +12,8 @@ const search = document.getElementById("search");
 const upcoming = document.getElementById("upcoming");
 const today = document.getElementById("today");
 const projects = document.getElementById("projects");
+const viewAll = document.getElementById("allTodos");
 const activityContainer = document.querySelector(".activity-container");
-
-//Test cases
-const university = createProject("Hello");
-addProject(university);
-console.log(getProjects())
-console.log(getTodayTodos(getProjects()));
-
 
 const addButton = document.createElement("button");
 addButton.textContent= "add";
@@ -113,8 +107,22 @@ createSearchButton.addEventListener("click", () => {
     
 });
 
-activityContainer.appendChild(searchForm);
+activityContainer.appendChild(displayTodoListUI(results));
 
 
 });
 
+//view all todos
+const createViewAllButton = document.createElement("button");
+createViewAllButton.textContent = "all";
+viewAll.appendChild(createViewAllButton);
+
+createViewAllButton.addEventListener("click", () => {
+    activityContainer.innerHTML = "";
+
+    const allTodos = getAllTodos(getProjects());
+
+    const displayTodos = displayTodoListUI(allTodos);
+
+    activityContainer.appendChild(displayTodos);
+})
