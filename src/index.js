@@ -1,7 +1,7 @@
 import "./style.css";
 import { entryFormUI } from "./entry/entryFormUI.js";
 import { createProjectUI } from "./projects/createProjectUI.js";
-import { addProject, getProjects, addToDoToProject, updateTodo, updateProject } from "./projects/projectManager.js";
+import { addProject, getProjects, addToDoToProject, updateTodo, updateProject, deleteTodo, deleteProject } from "./projects/projectManager.js";
 import { createProject } from "./projects/createProject.js";
 import { getTodayTodos, getUpcomingTodos, searchTodos, getAllTodos} from "./todos/todoFilters.js";
 import { displayTodoListUI } from "./todos/todoListUI.js";
@@ -19,11 +19,12 @@ const projects = document.getElementById("projects");
 const all = document.getElementById("allTodos");
 const activityContainer = document.querySelector(".activity-container");
 
-const addButton = document.createElement("button");
-addButton.textContent= "add";
-add.appendChild(addButton);
 
 //Entries
+const addButton = document.createElement("button");
+addButton.textContent= "Add Reminder";
+add.appendChild(addButton);
+
 addButton.addEventListener("click", () => {
     activityContainer.innerHTML= "";
 
@@ -43,7 +44,7 @@ addButton.addEventListener("click", () => {
 
 //Create Project
 const createProjectButton = document.createElement("button");
-createProjectButton.textContent = "create project";
+createProjectButton.textContent = "New List";
 projects.appendChild(createProjectButton);
 
 createProjectButton.addEventListener("click", () => {
@@ -68,7 +69,7 @@ createProjectButton.addEventListener("click", () => {
 
 //Upcoming
 const createUpcomingButton = document.createElement("button");
-createUpcomingButton.textContent = "upcoming";
+createUpcomingButton.textContent = "Upcoming";
 upcoming.appendChild(createUpcomingButton);
 
 createUpcomingButton.addEventListener("click", () => {
@@ -79,13 +80,20 @@ createUpcomingButton.addEventListener("click", () => {
     //Empty out the container
     activityContainer.innerHTML = ""
 
-    activityContainer.appendChild(todoList);
+    if (todos.length === 0) {
+        const noTodosMessage = document.createElement("p");
+        noTodosMessage.className = "empty-state-message";
+        noTodosMessage.textContent = "No upcoming Duits.";
+        activityContainer.appendChild(noTodosMessage);
+    } else {
+        activityContainer.appendChild(todoList);
+    }
 
 });
 
 //Today
 const createTodayButton = document.createElement("button");
-createTodayButton.textContent = "today";
+createTodayButton.textContent = "Today";
 today.appendChild(createTodayButton);
 
 createTodayButton.addEventListener("click", () => {
@@ -96,13 +104,20 @@ createTodayButton.addEventListener("click", () => {
     //Empty out the container
     activityContainer.innerHTML = ""
     
-    activityContainer.appendChild(todoList);
+    if (todos.length === 0) {
+        const noTodosMessage = document.createElement("p");
+        noTodosMessage.className = "empty-state-message";
+        noTodosMessage.textContent = "Nothing to do today?";
+        activityContainer.appendChild(noTodosMessage);
+    } else {
+        activityContainer.appendChild(todoList);
+    }
 
 });
 
 //Search
 const createSearchButton = document.createElement("button");
-createSearchButton.textContent = "search";
+createSearchButton.textContent = "Search";
 search.appendChild(createSearchButton);
 
 createSearchButton.addEventListener("click", () => {
@@ -134,7 +149,14 @@ function showAllTodos() {
     );
 
     activityContainer.innerHTML = "";
-    activityContainer.appendChild(todoList);
+    if (todos.length === 0) {
+        const noTodosMessage = document.createElement("p");
+        noTodosMessage.className = "empty-state-message";
+        noTodosMessage.textContent = "No Duits. Click on 'Add Reminder' to add a new entry!";
+        activityContainer.appendChild(noTodosMessage);
+    } else {
+        activityContainer.appendChild(todoList);
+    }
 }
 
 // Edit todo 
@@ -152,6 +174,11 @@ function handleEditTodo(todo) {
             alert("Todo successfully updated");
 
             showAllTodos();
+        },
+        (todo) => {
+            deleteTodo(todo);
+            alert("Todo successfully deleted");
+            showAllTodos();
         }
     );
 
@@ -168,7 +195,14 @@ function showProjects() {
     );
 
     activityContainer.innerHTML = "";
-    activityContainer.appendChild(projectList);
+    if (getProjects().length === 0) {
+        const noTodosMessage = document.createElement("p");
+        noTodosMessage.className = "empty-state-message";
+        noTodosMessage.textContent = "No projects entered.";
+        activityContainer.appendChild(noTodosMessage);
+    } else {
+        activityContainer.appendChild(projectList);
+    }
 }
 
 //edit project
@@ -181,6 +215,11 @@ function handleEditProject(project) {
 
             alert("Project successfully updated");
 
+            showProjects();
+        },
+        (project) => {
+            deleteProject(project);
+            alert("Project successfully deleted");
             showProjects();
         }
     );

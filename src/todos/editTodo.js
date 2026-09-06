@@ -1,4 +1,4 @@
-export function editTodoUI(todo, projects, onTodoUpdated) {
+export function editTodoUI(todo, projects, onTodoUpdated, onTodoDeleted) {
     const editForm = document.createElement("form");
     editForm.setAttribute("id", "edit-todo");
 
@@ -31,6 +31,14 @@ export function editTodoUI(todo, projects, onTodoUpdated) {
     saveButton.type = "submit";
     saveButton.textContent = "save";
 
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "btn-delete";
+    deleteButton.textContent = "delete";
+    deleteButton.addEventListener("click", () => {
+        if (onTodoDeleted) onTodoDeleted(todo);
+    });
+
     const cancelButton = document.createElement("button");
     cancelButton.type = "button";
     cancelButton.textContent = "cancel";
@@ -40,6 +48,7 @@ export function editTodoUI(todo, projects, onTodoUpdated) {
     editForm.appendChild(date);
     editForm.appendChild(projectSelect);
     editForm.appendChild(saveButton);
+    editForm.appendChild(deleteButton);
     editForm.appendChild(cancelButton);
 
     editForm.addEventListener("submit", (event) => {
