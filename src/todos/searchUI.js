@@ -1,25 +1,26 @@
-
 export function searchFormUI(onSearch) {
     const searchForm = document.createElement("form");
+    searchForm.className = "search-form";
 
     const searchInput = document.createElement("input");
     searchInput.setAttribute("type", "search");
-    searchInput.setAttribute("placeholder", "search todos...");
-
-    const searchButton = document.createElement("button");
-    searchButton.setAttribute("type", "submit");
-    searchButton.textContent = "search";
+    searchInput.setAttribute("placeholder", "Search reminders...");
+    searchInput.setAttribute("aria-label", "Search reminders");
+    searchInput.autofocus = true;
 
     searchForm.appendChild(searchInput);
-    searchForm.appendChild(searchButton);
+
+    const handleSearch = () => {
+        const query = searchInput.value.trim();
+        onSearch(query);
+    };
+
+    searchInput.addEventListener("input", handleSearch);
 
     searchForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        const searchEntry = searchInput.value;
+        handleSearch();
+    });
 
-        onSearch(searchEntry);
-    })
-
-    return searchForm
-
+    return searchForm;
 }

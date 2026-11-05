@@ -6,7 +6,8 @@
   "main": "script.js",
   "scripts": {
     "start": "webpack serve --open",
-    "build": "webpack"
+    "build": "webpack",
+    "test": "node --test test/*.test.js"
   },
   "repository": {
     "type": "git",

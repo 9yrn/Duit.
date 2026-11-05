@@ -1,31 +1,72 @@
-/* ------------------------------
-   Design tokens
-   ------------------------------ */
+/* -------------------------------------------------------------
+   Apple Human Interface Guidelines (HIG) Design Tokens & Theme
+   ------------------------------------------------------------- */
 :root {
-  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --bg-body: #f1f3f5;
+  --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  
+  /* Light Mode Palette */
+  --bg-canvas: #f2f2f7;
   --bg-surface: #ffffff;
-  --bg-sidebar: #ffffff;
-  
-  --text-main: #212529;
-  --text-muted: #868e96;
-  
-  --border-color: #dee2e6;
-  
-  --primary-color: #055b2d;
-  --primary-hover: #367e8c;
-  
-  --danger-color: #fa5252;
-  --danger-hover: #e03131;
-  
-  --radius-sm: 6px;
-  --radius-md: 10px;
+  --bg-sidebar: #f8f8fa;
+  --bg-hover: rgba(0, 0, 0, 0.04);
+  --bg-active: rgba(0, 0, 0, 0.08);
+
+  --text-primary: #1c1c1e;
+  --text-secondary: #8e8e93;
+  --text-tertiary: #c7c7cc;
+
+  --border-color: rgba(60, 60, 67, 0.12);
+  --separator: rgba(60, 60, 67, 0.08);
+
+  --primary: #28a745;
+  --primary-hover: #218838;
+  --primary-tint: rgba(40, 167, 69, 0.12);
+  --primary-tint-text: #1e7e34;
+
+  --danger: #ff3b30;
+  --danger-hover: #d70015;
+  --danger-tint: rgba(255, 59, 48, 0.1);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
   --radius-lg: 16px;
-  
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-canvas: #000000;
+    --bg-surface: #1c1c1e;
+    --bg-sidebar: #161618;
+    --bg-hover: rgba(255, 255, 255, 0.06);
+    --bg-active: rgba(255, 255, 255, 0.12);
+
+    --text-primary: #ffffff;
+    --text-secondary: #98989d;
+    --text-tertiary: #48484a;
+
+    --border-color: rgba(255, 255, 255, 0.14);
+    --separator: rgba(255, 255, 255, 0.08);
+
+    --primary: #34c759;
+    --primary-hover: #30d158;
+    --primary-tint: rgba(52, 199, 89, 0.18);
+    --primary-tint-text: #34c759;
+
+    --danger: #ff453a;
+    --danger-hover: #ff6961;
+    --danger-tint: rgba(255, 69, 58, 0.18);
+
+    --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* -------------------------------------------------------------
+   Base Resets & Typography
+   ------------------------------------------------------------- */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -34,271 +75,514 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--bg-body);
-  color: var(--text-main);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
   height: 100vh;
   overflow: hidden;
-  line-height: 1.5;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Layout */
+/* -------------------------------------------------------------
+   Layout Structure
+   ------------------------------------------------------------- */
 .container {
   display: flex;
   height: 100vh;
+  width: 100%;
 }
 
-/* Sidebar */
+/* -------------------------------------------------------------
+   Sidebar
+   ------------------------------------------------------------- */
 .sidebar {
-  width: 280px;
+  width: 270px;
   background-color: var(--bg-sidebar);
   border-right: 1px solid var(--border-color);
-  padding: 32px 24px;
+  padding: 24px 16px;
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
   overflow-y: auto;
+  gap: 16px;
+}
+
+.sidebar-header {
+  padding: 0 8px 4px 8px;
 }
 
 .sidebar h1 {
-  font-size: 3.75rem;
+  font-size: 1.75rem;
   font-weight: 700;
   letter-spacing: -0.5px;
-  margin-bottom: 32px;
-  color: var(--primary-color);
+  color: var(--primary);
+  user-select: none;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
 }
 
 .options {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
-.options button {
+.sidebar-section {
+  margin-top: 18px;
+  margin-bottom: 4px;
+  padding: 0 8px;
+}
+
+.sidebar-section-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Navigation Buttons (Apple HIG Sidebar list item style) */
+.nav-btn {
   width: 100%;
-  text-align: left;
-  padding: 10px 16px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
   border: none;
   background: transparent;
-  color: var(--text-main);
-  font-size: 0.95rem;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.92rem;
   font-weight: 500;
   border-radius: var(--radius-sm);
   cursor: pointer;
-  transition: all 0.15s ease;
+  text-align: left;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  user-select: none;
 }
 
-.options button:hover {
-  background-color: var(--bg-body);
+.nav-btn:hover {
+  background-color: var(--bg-hover);
 }
 
-/* Make 'add' button more prominent as the primary action */
-#add button {
-  background-color: var(--primary-color);
-  color: #fff;
-  margin-bottom: 16px;
-  text-align: center;
+.nav-btn:active {
+  background-color: var(--bg-active);
 }
 
-#add button:hover {
+.nav-btn.is-active {
+  background-color: var(--primary-tint);
+  color: var(--primary-tint-text);
+  font-weight: 600;
+}
+
+.nav-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+/* Primary "+ Add Reminder" Action Button */
+.nav-btn-primary {
+  background-color: var(--primary);
+  color: #ffffff !important;
+  font-weight: 600;
+  justify-content: center;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-btn-primary:hover {
   background-color: var(--primary-hover);
 }
 
-/* Main Content Area */
+.nav-btn-primary:active {
+  transform: scale(0.99);
+}
+
+/* Project Lists in Sidebar */
+.sidebar-project-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-btn-project {
+  font-weight: 400;
+}
+
+.nav-btn-project .project-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.nav-btn-add-list {
+  color: var(--primary);
+  font-size: 0.88rem;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+/* Badge */
+.badge {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: var(--bg-hover);
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
+}
+
+.nav-btn.is-active .badge {
+  color: var(--primary-tint-text);
+  background-color: rgba(40, 167, 69, 0.18);
+}
+
+/* -------------------------------------------------------------
+   Main Content Area
+   ------------------------------------------------------------- */
 .main-content {
   flex: 1;
-  padding: 48px;
+  padding: 40px 48px;
   overflow-y: auto;
-  background-color: var(--bg-body);
+  background-color: var(--bg-canvas);
 }
 
 .activity-container {
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
-/* Forms & Inputs */
+/* View Header */
+.view-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--separator);
+}
+
+.view-title-group {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.view-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+}
+
+.view-count {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.btn-header-action {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+}
+
+/* -------------------------------------------------------------
+   To-Do List & Items (Apple Reminders Style)
+   ------------------------------------------------------------- */
+.todo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.todoElement {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.todoElement:hover {
+  border-color: rgba(60, 60, 67, 0.2);
+}
+
+/* Circular Checkbox (Apple HIG Reminders hallmark) */
+.todo-check {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  border: 1.5px solid var(--text-secondary);
+  border-radius: 50%;
+  background-color: transparent;
+  cursor: pointer;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.todo-check:hover {
+  border-color: var(--primary);
+  background-color: var(--primary-tint);
+}
+
+.todo-check:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Completed State */
+.todoElement.is-completed {
+  opacity: 0.55;
+}
+
+.todoElement.is-completed .todo-check {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-size: 13px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.todoElement.is-completed .todo-title {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+/* To-Do Content */
+.todo-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.todo-title {
+  font-size: 0.98rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.todo-notes {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.todo-date {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+/* -------------------------------------------------------------
+   Buttons (Apple HIG Secondary & Destructive Controls)
+   ------------------------------------------------------------- */
+button {
+  font-family: inherit;
+}
+
+.btn-secondary {
+  padding: 8px 14px;
+  min-height: 36px;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover {
+  background-color: var(--bg-active);
+}
+
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.btn-delete {
+  background-color: var(--danger-tint) !important;
+  color: var(--danger) !important;
+  border: 1px solid rgba(255, 59, 48, 0.25) !important;
+}
+
+.btn-delete:hover {
+  background-color: var(--danger) !important;
+  color: #ffffff !important;
+}
+
+/* -------------------------------------------------------------
+   Forms & Inputs (Apple HIG Grouped Style)
+   ------------------------------------------------------------- */
 form {
-  background: var(--bg-surface);
-  padding: 32px;
+  background-color: var(--bg-surface);
+  padding: 24px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-card);
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 input, textarea, select {
-  padding: 12px 16px;
+  width: 100%;
+  padding: 10px 14px;
+  min-height: 44px;
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   font-family: inherit;
   font-size: 0.95rem;
-  color: var(--text-main);
-  background: #fff;
-  transition: border-color 0.15s ease;
+  color: var(--text-primary);
+  background-color: var(--bg-canvas);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:focus, textarea:focus, select:focus {
   outline: none;
-  border-color: var(--primary-color);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-tint);
 }
 
 textarea {
   resize: vertical;
-  min-height: 120px;
+  min-height: 100px;
 }
 
-/* Form Buttons */
-form button {
-  padding: 12px 16px;
-  border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  border: none;
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-form button[type="submit"] {
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-form button[type="submit"]:hover {
-  background-color: var(--primary-hover);
-}
-
-form button[type="button"] {
-  background-color: var(--bg-body);
-  color: var(--text-main);
-}
-
-form button[type="button"]:hover {
-  background-color: var(--border-color);
-}
-
-/* Delete Button Class */
-form button.btn-delete {
-  background-color: #fff;
-  color: var(--danger-color);
-  border: 1px solid var(--danger-color);
-}
-
-form button.btn-delete:hover {
-  background-color: var(--danger-color);
-  color: #fff;
-}
-
-/* Specific form layouts */
-#edit-todo, #entry {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 12px;
-}
-
-#edit-todo input, 
-#edit-todo textarea, 
-#edit-todo select,
-#entry input,
-#entry textarea,
-#entry select {
-  grid-column: 1 / -1;
-}
-
-.projectCreate, #edit-project {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.projectCreate button, #edit-project button {
-  width: 100%;
-}
-
-
-/* Result Lists */
-.todo-list, .project-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.todoElement, .project-element {
-  background: var(--bg-surface);
-  padding: 24px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-sm);
-}
-
-.project-element {
+.form-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
 }
 
-.todoElement h3, .project-element h3 {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.todoElement p {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  margin-bottom: 16px;
-}
-
-.todoElement button, .project-element button {
-  padding: 8px 16px;
+.form-actions button {
+  min-height: 40px;
+  padding: 8px 18px;
   border-radius: var(--radius-sm);
-  background-color: var(--bg-body);
-  color: var(--text-main);
-  border: 1px solid var(--border-color);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
   transition: all 0.15s ease;
 }
 
-.todoElement button:hover, .project-element button:hover {
-  background-color: var(--border-color);
+.form-actions button:hover {
+  background-color: var(--bg-active);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    padding: 24px;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    max-height: 300px;
-  }
-  .main-content {
-    padding: 24px;
-  }
-  #edit-todo, #entry {
-    grid-template-columns: 1fr;
-  }
+.form-actions button[type="submit"] {
+  background-color: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  font-weight: 600;
 }
 
+.form-actions button[type="submit"]:hover {
+  background-color: var(--primary-hover);
+}
 
-/* Empty State Message */
-.empty-state-message {
+/* Search Form */
+.search-form {
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.search-form input[type="search"] {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-pill);
+  padding: 10px 18px;
+}
+
+/* -------------------------------------------------------------
+   Empty States
+   ------------------------------------------------------------- */
+.empty-state {
   text-align: center;
-  color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-top: 48px;
-  padding: 24px;
-  background: var(--bg-surface);
+  padding: 48px 24px;
+  background-color: var(--bg-surface);
   border-radius: var(--radius-md);
   border: 1px dashed var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.empty-state-message {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.empty-state-btn {
+  background-color: var(--primary-tint);
+  color: var(--primary-tint-text);
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.empty-state-btn:hover {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+/* -------------------------------------------------------------
+   Responsive Design
+   ------------------------------------------------------------- */
+@media (max-width: 768px) {
+  body {
+    overflow-y: auto;
+    height: auto;
+  }
+
+  .container {
+    flex-direction: column;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 100%;
+    padding: 16px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    overflow-y: visible;
+  }
+
+  .main-content {
+    padding: 24px 16px;
+  }
 }

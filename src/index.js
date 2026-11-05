@@ -1,237 +1,371 @@
 import "./style.css";
 import { entryFormUI } from "./entry/entryFormUI.js";
 import { createProjectUI } from "./projects/createProjectUI.js";
-import { addProject, getProjects, addToDoToProject, updateTodo, updateProject, deleteTodo, deleteProject } from "./projects/projectManager.js";
+import {
+    addProject,
+    getProjects,
+    addToDoToProject,
+    updateTodo,
+    toggleTodo,
+    updateProject,
+    deleteTodo,
+    deleteProject
+} from "./projects/projectManager.js";
 import { createProject } from "./projects/createProject.js";
-import { getTodayTodos, getUpcomingTodos, searchTodos, getAllTodos} from "./todos/todoFilters.js";
+import {
+    getTodayTodos,
+    getUpcomingTodos,
+    searchTodos,
+    getAllTodos
+} from "./todos/todoFilters.js";
 import { displayTodoListUI } from "./todos/todoListUI.js";
 import { searchFormUI } from "./todos/searchUI.js";
-import { projectListUI } from "./projects/projectListUI.js";
 import { editProjectUI } from "./projects/editProjectUI.js";
 import { editTodoUI } from "./todos/editTodo.js";
 
-
-const add = document.getElementById("add");
-const search = document.getElementById("search");
-const upcoming = document.getElementById("upcoming");
-const today = document.getElementById("today");
-const projects = document.getElementById("projects");
-const all = document.getElementById("allTodos");
+const addSlot = document.getElementById("add");
+const searchSlot = document.getElementById("search");
+const upcomingSlot = document.getElementById("upcoming");
+const todaySlot = document.getElementById("today");
+const allSlot = document.getElementById("allTodos");
+const projectsSlot = document.getElementById("projects");
 const activityContainer = document.querySelector(".activity-container");
 
+let currentView = { type: "all", project: null };
 
-//Entries
+// --- Navigation Elements ---
 const addButton = document.createElement("button");
-addButton.textContent= "Add Reminder";
-add.appendChild(addButton);
+addButton.className = "nav-btn nav-btn-primary";
+addButton.textContent = "+ Add Reminder";
+addSlot.appendChild(addButton);
 
-addButton.addEventListener("click", () => {
-    activityContainer.innerHTML= "";
+const searchButton = document.createElement("button");
+searchButton.className = "nav-btn";
+searchButton.textContent = "Search";
+searchSlot.appendChild(searchButton);
 
-    const entryForm = entryFormUI(getProjects(), (todo, project) => {
-        addToDoToProject(project, todo);
-        console.log(todo);
-        console.log(project);
-        alert("Duit Successfully Created");
+const todayButton = document.createElement("button");
+todayButton.className = "nav-btn";
+todayButton.textContent = "Today";
+todaySlot.appendChild(todayButton);
 
-        showAllTodos();
+const upcomingButton = document.createElement("button");
+upcomingButton.className = "nav-btn";
+upcomingButton.textContent = "Upcoming";
+upcomingSlot.appendChild(upcomingButton);
+
+const allButton = document.createElement("button");
+allButton.className = "nav-btn";
+allButton.textContent = "All";
+allSlot.appendChild(allButton);
+
+// --- Sidebar Projects List ---
+function renderProjectsSidebar() {
+    projectsSlot.innerHTML = "";
+
+    const projectList = document.createElement("ul");
+    projectList.className = "sidebar-project-list";
+
+    getProjects().forEach((project) => {
+        const item = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.className = "nav-btn nav-btn-project";
+        if (currentView.type === "project" && currentView.project === project) {
+            btn.classList.add("is-active");
+        }
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "project-name";
+        nameSpan.textContent = project.name;
+
+        const countBadge = document.createElement("span");
+        countBadge.className = "badge";
+        countBadge.textContent = (project.todos || []).length;
+
+        btn.appendChild(nameSpan);
+        btn.appendChild(countBadge);
+
+        btn.addEventListener("click", () => {
+            currentView = { type: "project", project };
+            renderCurrentView();
+        });
+
+        item.appendChild(btn);
+        projectList.appendChild(item);
     });
 
-    activityContainer.appendChild(entryForm);
+    const newProjectBtn = document.createElement("button");
+    newProjectBtn.className = "nav-btn nav-btn-add-list";
+    newProjectBtn.textContent = "+ New List";
+    newProjectBtn.addEventListener("click", showAddProject);
 
-    
-})
+    projectsSlot.appendChild(projectList);
+    projectsSlot.appendChild(newProjectBtn);
+}
 
-//Create Project
-const createProjectButton = document.createElement("button");
-createProjectButton.textContent = "New List";
-projects.appendChild(createProjectButton);
-
-createProjectButton.addEventListener("click", () => {
-    activityContainer.innerHTML= "";
-
-    const projectForm = createProjectUI((projectTitle) => {
-        const newProject = createProject(projectTitle);
-
-        addProject(newProject);
-        
-        alert("Project Successfully Created");
-        console.log(getProjects());
-
-        showProjects();
+function updateActiveNav() {
+    [searchButton, todayButton, upcomingButton, allButton].forEach((btn) => {
+        btn.classList.remove("is-active");
     });
 
-    activityContainer.appendChild(projectForm);
+    if (currentView.type === "search") searchButton.classList.add("is-active");
+    if (currentView.type === "today") todayButton.classList.add("is-active");
+    if (currentView.type === "upcoming") upcomingButton.classList.add("is-active");
+    if (currentView.type === "all") allButton.classList.add("is-active");
 
+    renderProjectsSidebar();
+}
 
+function renderHeader(title, count, onEditAction = null) {
+    const header = document.createElement("header");
+    header.className = "view-header";
 
-})
+    const titleGroup = document.createElement("div");
+    titleGroup.className = "view-title-group";
 
-//Upcoming
-const createUpcomingButton = document.createElement("button");
-createUpcomingButton.textContent = "Upcoming";
-upcoming.appendChild(createUpcomingButton);
+    const h2 = document.createElement("h2");
+    h2.className = "view-title";
+    h2.textContent = title;
 
-createUpcomingButton.addEventListener("click", () => {
-    const todos = getUpcomingTodos(getProjects());
+    const countSpan = document.createElement("span");
+    countSpan.className = "view-count";
+    countSpan.textContent = count;
 
-    const todoList = displayTodoListUI(todos);
+    titleGroup.appendChild(h2);
+    titleGroup.appendChild(countSpan);
+    header.appendChild(titleGroup);
 
-    //Empty out the container
-    activityContainer.innerHTML = ""
-
-    if (todos.length === 0) {
-        const noTodosMessage = document.createElement("p");
-        noTodosMessage.className = "empty-state-message";
-        noTodosMessage.textContent = "No upcoming Duits.";
-        activityContainer.appendChild(noTodosMessage);
-    } else {
-        activityContainer.appendChild(todoList);
+    if (onEditAction) {
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "btn-secondary btn-header-action";
+        editBtn.textContent = "Edit List";
+        editBtn.addEventListener("click", onEditAction);
+        header.appendChild(editBtn);
     }
 
-});
+    return header;
+}
 
-//Today
-const createTodayButton = document.createElement("button");
-createTodayButton.textContent = "Today";
-today.appendChild(createTodayButton);
+function renderEmptyState(message, actionLabel = "Add Reminder", onAction = null) {
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
 
-createTodayButton.addEventListener("click", () => {
-    const todos = getTodayTodos(getProjects());
+    const p = document.createElement("p");
+    p.className = "empty-state-message";
+    p.textContent = message;
 
-    const todoList = displayTodoListUI(todos);
+    emptyState.appendChild(p);
 
-    //Empty out the container
-    activityContainer.innerHTML = ""
-    
-    if (todos.length === 0) {
-        const noTodosMessage = document.createElement("p");
-        noTodosMessage.className = "empty-state-message";
-        noTodosMessage.textContent = "Nothing to do today?";
-        activityContainer.appendChild(noTodosMessage);
-    } else {
-        activityContainer.appendChild(todoList);
+    if (onAction) {
+        const actionBtn = document.createElement("button");
+        actionBtn.type = "button";
+        actionBtn.className = "btn-secondary empty-state-btn";
+        actionBtn.textContent = actionLabel;
+        actionBtn.addEventListener("click", onAction);
+        emptyState.appendChild(actionBtn);
     }
 
-});
+    return emptyState;
+}
 
-//Search
-const createSearchButton = document.createElement("button");
-createSearchButton.textContent = "Search";
-search.appendChild(createSearchButton);
-
-createSearchButton.addEventListener("click", () => {
+// --- View Renderers ---
+function renderCurrentView() {
+    updateActiveNav();
     activityContainer.innerHTML = "";
 
+    if (currentView.type === "today") {
+        const todos = getTodayTodos(getProjects());
+        activityContainer.appendChild(renderHeader("Today", todos.length));
+        if (todos.length === 0) {
+            activityContainer.appendChild(
+                renderEmptyState("No reminders due today.", "Add Reminder", showAddTodo)
+            );
+        } else {
+            activityContainer.appendChild(displayTodoListUI(todos, handleEditTodo, handleToggleTodo));
+        }
+    } else if (currentView.type === "upcoming") {
+        const todos = getUpcomingTodos(getProjects());
+        activityContainer.appendChild(renderHeader("Upcoming", todos.length));
+        if (todos.length === 0) {
+            activityContainer.appendChild(
+                renderEmptyState("No upcoming reminders scheduled.", "Schedule a Reminder", showAddTodo)
+            );
+        } else {
+            activityContainer.appendChild(displayTodoListUI(todos, handleEditTodo, handleToggleTodo));
+        }
+    } else if (currentView.type === "project") {
+        const project = currentView.project;
+        // Verify project still exists
+        if (!getProjects().includes(project)) {
+            currentView = { type: "all", project: null };
+            renderCurrentView();
+            return;
+        }
 
-    const searchForm = searchFormUI((searchEntry) => {
-        const results = searchTodos(getProjects(), searchEntry);
+        const todos = project.todos || [];
+        activityContainer.appendChild(
+            renderHeader(project.name, todos.length, () => handleEditProject(project))
+        );
+        if (todos.length === 0) {
+            activityContainer.appendChild(
+                renderEmptyState(`No reminders in "${project.name}".`, "Add Reminder", () => showAddTodo(project.name))
+            );
+        } else {
+            activityContainer.appendChild(displayTodoListUI(todos, handleEditTodo, handleToggleTodo));
+        }
+    } else if (currentView.type === "search") {
+        activityContainer.appendChild(renderHeader("Search", ""));
+        const searchUI = searchFormUI((query) => {
+            const results = searchTodos(getProjects(), query);
+            const existingResults = activityContainer.querySelector(".todo-list, .empty-state");
+            if (existingResults) existingResults.remove();
 
-        activityContainer.appendChild(displayTodoListUI(results));
-        //test
-        console.log(results);
-    });
-
-    activityContainer.appendChild(searchForm);
-
-
-
-});
-
-// View all todos
-
-function showAllTodos() {
-    const todos = getAllTodos(getProjects());
-
-    const todoList = displayTodoListUI(
-        todos,
-        handleEditTodo
-    );
-
-    activityContainer.innerHTML = "";
-    if (todos.length === 0) {
-        const noTodosMessage = document.createElement("p");
-        noTodosMessage.className = "empty-state-message";
-        noTodosMessage.textContent = "No Duits. Click on 'Add Reminder' to add a new entry!";
-        activityContainer.appendChild(noTodosMessage);
+            if (query && results.length === 0) {
+                activityContainer.appendChild(renderEmptyState(`No results matching "${query}".`));
+            } else if (results.length > 0) {
+                activityContainer.appendChild(displayTodoListUI(results, handleEditTodo, handleToggleTodo));
+            }
+        });
+        activityContainer.appendChild(searchUI);
     } else {
-        activityContainer.appendChild(todoList);
+        // "all" is the default fallback view
+        currentView = { type: "all", project: null };
+        const todos = getAllTodos(getProjects());
+        activityContainer.appendChild(renderHeader("All Reminders", todos.length));
+        if (todos.length === 0) {
+            activityContainer.appendChild(
+                renderEmptyState("No reminders yet.", "Add Your First Reminder", showAddTodo)
+            );
+        } else {
+            activityContainer.appendChild(displayTodoListUI(todos, handleEditTodo, handleToggleTodo));
+        }
     }
 }
 
-// Edit todo 
+// --- Action Handlers ---
+function handleToggleTodo(todo) {
+    toggleTodo(todo);
+    renderCurrentView();
+}
+
+function showAddTodo(defaultProjectName = "") {
+    activityContainer.innerHTML = "";
+    activityContainer.appendChild(renderHeader("New Reminder", ""));
+
+    const defaultName = typeof defaultProjectName === "string" && defaultProjectName
+        ? defaultProjectName
+        : (currentView.project ? currentView.project.name : (getProjects()[0]?.name || "Inbox"));
+
+    const form = entryFormUI(
+        getProjects(),
+        (todo, assignedProject) => {
+            addToDoToProject(assignedProject, todo);
+            renderCurrentView();
+        },
+        () => renderCurrentView(),
+        defaultName
+    );
+
+    activityContainer.appendChild(form);
+}
+
+function showAddProject() {
+    activityContainer.innerHTML = "";
+    activityContainer.appendChild(renderHeader("New List", ""));
+
+    const form = createProjectUI(
+        (projectTitle) => {
+            const newProj = createProject(projectTitle);
+            addProject(newProj);
+            currentView = { type: "project", project: newProj };
+            renderCurrentView();
+        },
+        () => renderCurrentView()
+    );
+
+    activityContainer.appendChild(form);
+}
+
 function handleEditTodo(todo) {
-    const editForm = editTodoUI(
+    activityContainer.innerHTML = "";
+    activityContainer.appendChild(renderHeader("Edit Reminder", ""));
+
+    const form = editTodoUI(
         todo,
         getProjects(),
-        (todo, updatedData, selectedProject) => {
+        (targetTodo, updatedData, selectedProject) => {
+            updateTodo(targetTodo, updatedData);
 
-            updateTodo(todo, updatedData);
+            // Move todo to another project if selection changed
+            if (selectedProject) {
+                const currentHolder = getProjects().find((p) => (p.todos || []).includes(targetTodo));
+                if (currentHolder && currentHolder !== selectedProject) {
+                    const idx = currentHolder.todos.indexOf(targetTodo);
+                    if (idx > -1) currentHolder.todos.splice(idx, 1);
+                    selectedProject.todos.push(targetTodo);
+                    // trigger save via updateTodo
+                    updateTodo(targetTodo, {});
+                }
+            }
 
-            // Project changing will be handled separately
-            console.log("Selected project:", selectedProject);
-
-            alert("Todo successfully updated");
-
-            showAllTodos();
+            renderCurrentView();
         },
-        (todo) => {
-            deleteTodo(todo);
-            alert("Todo successfully deleted");
-            showAllTodos();
-        }
+        (targetTodo) => {
+            deleteTodo(targetTodo);
+            renderCurrentView();
+        },
+        () => renderCurrentView()
     );
 
-    activityContainer.innerHTML = "";
-    activityContainer.appendChild(editForm);
+    activityContainer.appendChild(form);
 }
 
-//show projects
-
-function showProjects() {
-    const projectList = projectListUI(
-        getProjects(),
-        handleEditProject
-    );
-
-    activityContainer.innerHTML = "";
-    if (getProjects().length === 0) {
-        const noTodosMessage = document.createElement("p");
-        noTodosMessage.className = "empty-state-message";
-        noTodosMessage.textContent = "No projects entered.";
-        activityContainer.appendChild(noTodosMessage);
-    } else {
-        activityContainer.appendChild(projectList);
-    }
-}
-
-//edit project
 function handleEditProject(project) {
-    const editForm = editProjectUI(
+    activityContainer.innerHTML = "";
+    activityContainer.appendChild(renderHeader(`Edit "${project.name}"`, ""));
+
+    const form = editProjectUI(
         project,
-        (project, newName) => {
-
-            updateProject(project, newName);
-
-            alert("Project successfully updated");
-
-            showProjects();
+        (targetProj, newName) => {
+            updateProject(targetProj, newName);
+            renderCurrentView();
         },
-        (project) => {
-            deleteProject(project);
-            alert("Project successfully deleted");
-            showProjects();
-        }
+        (targetProj) => {
+            deleteProject(targetProj);
+            currentView = { type: "all", project: null };
+            renderCurrentView();
+        },
+        () => renderCurrentView()
     );
 
-    activityContainer.innerHTML = "";
-    activityContainer.appendChild(editForm);
+    activityContainer.appendChild(form);
 }
 
-//all todos
-const allButton = document.createElement("button");
-allButton.textContent = "All";
+// --- Event Listeners for Nav ---
+addButton.addEventListener("click", () => showAddTodo());
 
-all.appendChild(allButton);
+searchButton.addEventListener("click", () => {
+    currentView = { type: "search", project: null };
+    renderCurrentView();
+});
 
-allButton.addEventListener("click", showAllTodos);
+todayButton.addEventListener("click", () => {
+    currentView = { type: "today", project: null };
+    renderCurrentView();
+});
+
+upcomingButton.addEventListener("click", () => {
+    currentView = { type: "upcoming", project: null };
+    renderCurrentView();
+});
+
+allButton.addEventListener("click", () => {
+    currentView = { type: "all", project: null };
+    renderCurrentView();
+});
+
+// Initial boot: start on Today if any exist, otherwise All
+const initialToday = getTodayTodos(getProjects());
+currentView = { type: initialToday.length > 0 ? "today" : "all", project: null };
+renderCurrentView();

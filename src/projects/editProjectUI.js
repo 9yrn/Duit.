@@ -1,38 +1,51 @@
-// DOM function for form creation for projects
-export function editProjectUI(project, onProjectUpdated, onProjectDeleted) {
+// DOM function for form creation for editing projects
+export function editProjectUI(project, onProjectUpdated, onProjectDeleted, onCancel) {
     const editForm = document.createElement("form");
     editForm.setAttribute("id", "edit-project");
 
     const projectTitle = document.createElement("input");
     projectTitle.setAttribute("type", "text");
     projectTitle.value = project.name;
+    projectTitle.required = true;
+    projectTitle.setAttribute("aria-label", "List Name");
 
-    const saveButton = document.createElement("button");
-    saveButton.setAttribute("type", "submit");
-    saveButton.textContent = "save";
+    const buttonGroup = document.createElement("div");
+    buttonGroup.className = "form-actions";
 
     const deleteButton = document.createElement("button");
     deleteButton.setAttribute("type", "button");
     deleteButton.className = "btn-delete";
-    deleteButton.textContent = "delete";
+    deleteButton.textContent = "Delete List";
     deleteButton.addEventListener("click", () => {
         if (onProjectDeleted) onProjectDeleted(project);
     });
 
     const cancel = document.createElement("button");
     cancel.setAttribute("type", "button");
-    cancel.textContent = "cancel";
+    cancel.textContent = "Cancel";
+
+    const saveButton = document.createElement("button");
+    saveButton.setAttribute("type", "submit");
+    saveButton.textContent = "Save";
+
+    buttonGroup.appendChild(deleteButton);
+    buttonGroup.appendChild(cancel);
+    buttonGroup.appendChild(saveButton);
 
     editForm.appendChild(projectTitle);
-    editForm.appendChild(saveButton);
-    editForm.appendChild(deleteButton);
-    editForm.appendChild(cancel);
+    editForm.appendChild(buttonGroup);
 
-    
     editForm.addEventListener("submit", (event) => {
         event.preventDefault();
+        const newTitle = projectTitle.value.trim();
+        if (newTitle) {
+            onProjectUpdated(project, newTitle);
+        }
+    });
 
-        onProjectUpdated(project, projectTitle.value);
+    cancel.addEventListener("click", () => {
+        if (onCancel) onCancel();
+        else editForm.remove();
     });
 
     return editForm;

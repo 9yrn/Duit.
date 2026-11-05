@@ -4,8 +4,7 @@ const projects = loadProjects();
 
 export function addProject(project) {
     projects.push(project);
-
-    saveProjects(projects)
+    saveProjects(projects);
 }
 
 export function getProjects() {
@@ -14,7 +13,6 @@ export function getProjects() {
 
 export function getTodoToProject(project, todo) {
     project.todos.push(todo);
-
     saveProjects(projects);
 }
 
@@ -27,7 +25,16 @@ export function updateTodo(todo, updatedData) {
     todo.title = updatedData.title;
     todo.text = updatedData.text;
     todo.date = updatedData.date;
+    if (updatedData.completed !== undefined) {
+        todo.completed = updatedData.completed;
+    }
     saveProjects(projects);
+}
+
+export function toggleTodo(todo) {
+    todo.completed = !todo.completed;
+    saveProjects(projects);
+    return todo.completed;
 }
 
 export function updateProject(project, newName) {

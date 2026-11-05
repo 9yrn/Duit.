@@ -1,46 +1,45 @@
-import {isToday, isAfter, parseISO, startOfDay} from "date-fns";
+import { isToday, isAfter, parseISO, startOfDay } from "date-fns";
 
 export function getTodayTodos(projects) {
     const todayTodos = [];
-
-    // Running two layers as todos is a sub array for todo
     projects.forEach((project) => {
+        if (!project.todos) return;
         project.todos.forEach((todo) => {
-            //Basically asks "is the duedate for the todo today"
-            if (isToday(parseISO(todo.date))) {
+            if (todo.date && isToday(parseISO(todo.date))) {
                 todayTodos.push(todo);
             }
         });
-        
     });
-
     return todayTodos;
 }
 
 export function getUpcomingTodos(projects) {
     const upcomingTodos = [];
-    const today = startOfDay(new Date())
+    const today = startOfDay(new Date());
 
     projects.forEach((project) => {
+        if (!project.todos) return;
         project.todos.forEach((todo) => {
-            //Logic: Is ToDo's date after today?
-            if (isAfter(parseISO(todo.date), today)) {
+            if (todo.date && isAfter(parseISO(todo.date), today)) {
                 upcomingTodos.push(todo);
             }
-        }); 
+        });
     });
 
     return upcomingTodos;
 }
 
 export function searchTodos(projects, searchEntry) {
-    //Both the search entry and array content is set to lower case since the .includes function is case sensitive
-    const search = searchEntry.toLowerCase();
-    const searchResults = [];
+    const search = searchEntry.trim().toLowerCase();
+    if (!search) return [];
 
+    const searchResults = [];
     projects.forEach((project) => {
+        if (!project.todos) return;
         project.todos.forEach((todo) => {
-            if (todo.title.toLowerCase().includes(search) || (todo.text.toLowerCase().includes(search)))  {
+            const titleMatch = todo.title && todo.title.toLowerCase().includes(search);
+            const textMatch = todo.text && todo.text.toLowerCase().includes(search);
+            if (titleMatch || textMatch) {
                 searchResults.push(todo);
             }
         });
@@ -51,12 +50,11 @@ export function searchTodos(projects, searchEntry) {
 
 export function getAllTodos(projects) {
     const allTodos = [];
-
     projects.forEach((project) => {
+        if (!project.todos) return;
         project.todos.forEach((todo) => {
             allTodos.push(todo);
-        })
-    })
+        });
+    });
     return allTodos;
 }
-

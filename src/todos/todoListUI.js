@@ -1,40 +1,69 @@
-export function displayTodoListUI(todos, onEditTodo) {
+export function displayTodoListUI(todos, onEditTodo, onToggleTodo) {
     const todoContainer = document.createElement("div");
     todoContainer.classList.add("todo-list");
 
     todos.forEach((todo) => {
-
-        const todoElement = document.createElement("div")
+        const todoElement = document.createElement("article");
         todoElement.classList.add("todoElement");
+        if (todo.completed) {
+            todoElement.classList.add("is-completed");
+        }
 
-        const editButton = document.createElement("button");
-        editButton.textContent = "edit";
-        
+        // Circular toggle button matching Apple Reminders
+        const checkButton = document.createElement("button");
+        checkButton.type = "button";
+        checkButton.className = "todo-check";
+        checkButton.setAttribute("role", "checkbox");
+        checkButton.setAttribute("aria-checked", Boolean(todo.completed).toString());
+        checkButton.setAttribute("aria-label", `Mark "${todo.title}" as ${todo.completed ? "incomplete" : "complete"}`);
+
+        checkButton.addEventListener("click", () => {
+            if (onToggleTodo) {
+                onToggleTodo(todo);
+            }
+        });
+
+        const contentWrapper = document.createElement("div");
+        contentWrapper.className = "todo-content";
+
         const title = document.createElement("h3");
+        title.className = "todo-title";
         title.textContent = todo.title;
 
-        const content = document.createElement("p");
-        content.textContent = todo.text;
+        contentWrapper.appendChild(title);
 
-        const date = document.createElement("p");
-        date.textContent = todo.date;
+        if (todo.text && todo.text.trim().length > 0) {
+            const content = document.createElement("p");
+            content.className = "todo-notes";
+            content.textContent = todo.text;
+            contentWrapper.appendChild(content);
+        }
 
-        todoElement.appendChild(title);
-        todoElement.appendChild(content);
-        todoElement.appendChild(date);
-        todoElement.appendChild(editButton);
+        if (todo.date) {
+            const date = document.createElement("span");
+            date.className = "todo-date";
+            date.textContent = todo.date;
+            contentWrapper.appendChild(date);
+        }
+
+        const editButton = document.createElement("button");
+        editButton.type = "button";
+        editButton.className = "btn-secondary btn-edit";
+        editButton.textContent = "Edit";
+        editButton.setAttribute("aria-label", `Edit "${todo.title}"`);
 
         editButton.addEventListener("click", () => {
-            onEditTodo(todo);
-        })
+            if (onEditTodo) {
+                onEditTodo(todo);
+            }
+        });
+
+        todoElement.appendChild(checkButton);
+        todoElement.appendChild(contentWrapper);
+        todoElement.appendChild(editButton);
 
         todoContainer.appendChild(todoElement);
-
     });
 
     return todoContainer;
-
-
 }
-
-    
